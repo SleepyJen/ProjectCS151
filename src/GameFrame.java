@@ -50,7 +50,7 @@ public class GameFrame extends JPanel implements ActionListener{
 	public void piecesDropped() {
 		for(int i=0;i<4;i++) {
 			int x = thisX + currentPiece.getX(i);
-			int y = thisY + currentPiece.getY(i);
+			int y = thisY - currentPiece.getY(i);
 			tetrisShapes[y*WIDTH + x ] = currentPiece.getShape();
 		}
 		
@@ -64,9 +64,9 @@ public class GameFrame extends JPanel implements ActionListener{
 	public void removeLines() {
 		int filledLines = 0;
 		
-		for(int i = HEIGHT -1; i>=0; --i) {
+		for(int i = HEIGHT -2; i>=0; i--) { 
 			boolean fullLine = true;
-			for(int j = 0; i<WIDTH; ++j) {
+			for(int j = 1; j<WIDTH; j++) {
 				if(shapeAtLocation(j,i) == ShapesOfTetris.NOTHING){
 					fullLine = false;
 					j = WIDTH; 
@@ -74,8 +74,8 @@ public class GameFrame extends JPanel implements ActionListener{
 			}
 			if(fullLine) {
 				filledLines++;
-				for(int k=i; k <WIDTH; ++k) {
-					for(int j=0; j<WIDTH;++j) {
+				for(int k=i+1; k <HEIGHT -1; k++) {
+					for(int j=1; j<WIDTH;j++) {
 						tetrisShapes[k*WIDTH+j] = shapeAtLocation(j, k+1);
 					}
 				}
@@ -218,13 +218,15 @@ public class GameFrame extends JPanel implements ActionListener{
 class Press extends KeyAdapter {
 	public void keyPressed(KeyEvent k) {
 		if(!start || currentPiece.getShape() == ShapesOfTetris.NOTHING) {
-			int keyCode = k.getKeyCode();
-			if(keyCode == 'p' || keyCode == 'P') {
-				pause();
-			}
-			if(pause) {
-				return;
-			}
+			return;
+		}
+		int keyCode = k.getKeyCode();
+		if(keyCode == 'p' || keyCode == 'P') {
+			pause();
+		}
+		if(pause) {
+			return;
+		}
 			if(keyCode == KeyEvent.VK_RIGHT) {
 				moveablePiece(currentPiece, thisX + 1 , thisY);
 			}else if (keyCode == KeyEvent.VK_LEFT) {
@@ -236,7 +238,7 @@ class Press extends KeyAdapter {
 			}else if(keyCode == KeyEvent.VK_SPACE) {
 				trickleDown();
 			} //should i add a down one space faster?
-		}
+		
 	}
 }
 }
