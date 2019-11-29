@@ -94,7 +94,7 @@ public class GameFrame extends JPanel implements ActionListener{
 	public void newPiece() {
 		currentPiece.setRandom();
 		thisX = WIDTH/2 +1;
-		thisY = HEIGHT/2 + 1 + currentPiece.minY();
+		thisY = HEIGHT- 1 + currentPiece.minY();
 		
 		if(!moveablePiece(currentPiece, thisX, thisY-1)) {
 			currentPiece.setShape(ShapesOfTetris.NOTHING);
@@ -107,9 +107,9 @@ public class GameFrame extends JPanel implements ActionListener{
 	public boolean moveablePiece(TetrisShapes newShape, int newX, int newY) {
 		for(int i = 0; i<4; ++i) {
 			int x = newX + newShape.getX(i);
-			int y = newY + newShape.getY(i);
+			int y = newY - newShape.getY(i);
 			
-			if(x <0 || y <0 ||x>WIDTH || y >=HEIGHT) {
+			if(x <0 || y <0 ||x>=WIDTH || y >=HEIGHT) {
 				return false;
 			}
 			if(shapeAtLocation(x,y) != ShapesOfTetris.NOTHING) {
@@ -119,6 +119,8 @@ public class GameFrame extends JPanel implements ActionListener{
 		this.currentPiece = newShape;
 		this.thisX = newX;
 		this.thisY = newY;
+		repaint();
+		
 		return true;
 	}
 	
@@ -141,7 +143,7 @@ public class GameFrame extends JPanel implements ActionListener{
 	public void paint(Graphics g2) {
 		super.paint(g2);
 		Dimension size = getSize();
-		int top = (int) (size.getHeight() - HEIGHT*getBoardHeight());
+		int top = (int) size.getHeight() - HEIGHT*getBoardHeight();
 		
 		for(int i=0; i<HEIGHT; i++) {
 			for(int j=0; j<WIDTH; ++j) {
@@ -164,10 +166,10 @@ public class GameFrame extends JPanel implements ActionListener{
 	private void drawShapes(Graphics g2, int x, int y, ShapesOfTetris shape) { //this may not work, check when run again.
 		Color c = shape.color;
 		g2.setColor(c);
-		g2.fillRect(x + 1, y +1, getBoardWidth(), getBoardHeight());
+		g2.fillRect(x + 1, y +1, getBoardWidth()-2, getBoardHeight()-2);
 		g2.setColor(c.brighter()); //not sure this will work....
 		g2.drawLine(x, y +getBoardHeight()-1, x, y);
-		g2.drawLine(x, y, x +getBoardHeight()-1, y);
+		g2.drawLine(x, y, x +getBoardWidth()-1, y);
 		g2.setColor(c.darker()); //also not sure if this would work...
 		g2.drawLine(x+1, y+getBoardHeight()-1, x+getBoardWidth()-1, y+getBoardHeight()-1);
 		g2.drawLine(x+getBoardWidth()-1, y+getBoardHeight()-1, x+getBoardWidth()-1, y+1);
@@ -208,7 +210,7 @@ public class GameFrame extends JPanel implements ActionListener{
 			}else {
 				timer.start();
 				label.setText("" + removedLines);
-			}
+			}	
 		}
 		repaint();
 	}
